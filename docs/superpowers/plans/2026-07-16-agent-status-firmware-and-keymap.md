@@ -1299,6 +1299,8 @@ Flash and verify on the physical keyboard. Flashing: put a half into bootloader 
 - [ ] Type "the" and "hhh" quickly many times: no misfires into the Agents layer (require-prior-idle plus F-row-only hold trigger).
 - [ ] With the test script not running, the keyboard behaves fully stock: typing, layers, Magic functions, RGB toggles.
 - [ ] Mark this plan's milestone done; the daemon plan (2026-07-16-glove-agentd-daemon.md) takes over from here.
+- [ ] Daemon phase note: after unplugging and replugging the keyboard, LEDs may stay dark for up to 30 seconds (the daemon repaints on its next heartbeat; there is no hotplug detection). Not a firmware fault.
+- [ ] Daemon phase note: unplug any other QMK/VIA keyboard before testing discovery; the daemon matches the generic raw HID usage page and another VIA-capable board enumerating first can win.
 
 ---
 
