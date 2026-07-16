@@ -17,7 +17,7 @@ Design principle: **dark by default**. A light means a human is needed. No light
   - **Amber**: needs input (permission prompt or question)
   - **Green**: turn finished, idle, output waiting
   - **Red**: session died (process gone, crash)
-  - **Violet on H**: Agents layer armed (local firmware effect)
+  - **Violet**: Agents layer armed (local firmware effect). Phase 1 renders it on the unlit F-row slot LEDs, which doubles as a map of live jump targets; phase 2 moves it to the H key itself (see Amendments)
 - Jump gesture: hold H (a TailorKey-style layer-tap, like the existing home-row mods) to arm the Agents layer, then tap a lit F-key. Tap always jumps; there is no kill gesture on the keyboard.
 - Jumping to a red (dead) slot acknowledges and clears it instead of jumping.
 - Slot assignment: a new Claude Code session claims the lowest free slot and keeps it until it ends or dies. Dead slots are reused last so a red light is never silently repurposed. Sessions beyond the slot cap queue for the next free slot in registration order.
@@ -38,7 +38,7 @@ Data flow: Claude Code hooks -> Unix socket -> daemon state machine -> raw HID L
 - **Raw HID endpoint**: vendor-defined usage page 0xFF60, usage 0x61 (zmk-raw-hid / QMK convention), 32-byte reports, coexisting with the normal keyboard interfaces. USB only.
 - **LED overlay**: paints received colors onto the ten F-row LED positions. Black means no overlay; the LED falls back to normal underglow behavior. All other LEDs are untouched. If no host message arrives for 120 seconds, the overlay clears itself so a crashed daemon cannot leave stale lights.
 - **Jump behavior**: `&agent_jump N` sends a JUMP message upstream instead of a keycode.
-- **Layer indicator**: while the Agents layer is active, the H key LED shows violet (firmware-local, no host round trip).
+- **Layer indicator**: while the Agents layer is active, slot LEDs that are currently unlit render dim violet (firmware-local, no host round trip). Violet on the H key itself is deferred to phase 2; see Amendments.
 - **Split relay (phase 2)**: a custom split-transport command forwards the five right-half slot colors from the central (left) half to the peripheral (right) half. Until then the daemon caps usable slots at 5.
 
 ### Protocol v1
@@ -120,6 +120,13 @@ Each step lands independently and leaves the keyboard usable.
 - Terminals other than iTerm2; operating systems other than macOS
 - Suppressing lights for the currently focused pane (possible future refinement)
 - Per-project or per-model color schemes
+
+## Amendments (2026-07-16, post source exploration)
+
+Two facts surfaced while grounding the implementation plans in the `moergo-sc/zmk` sources:
+
+1. **Violet-on-H requires the phase-2 split relay.** The H key's LED sits on the right half, which is the wireless peripheral, and the MoErgo fork has no central-to-peripheral command for driving an LED. Phase 1 therefore renders the armed indicator as dim violet on unlit F-row slot LEDs on the left half instead, and the H-key variant ships with phase 2 alongside the F6-F10 colors.
+2. **Host-to-keyboard messages travel as SET_REPORT control transfers**, not an interrupt OUT endpoint (a property of the vendored raw HID design). No behavioral impact: hidapi's write path uses SetReport on macOS, so the daemon code is unchanged.
 
 ## Decisions log
 
