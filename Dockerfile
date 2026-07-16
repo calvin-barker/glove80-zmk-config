@@ -1,5 +1,7 @@
 FROM nixpkgs/nix:nixos-23.11
 
+ARG ZMK_REPO=moergo-sc/zmk
+
 ENV PATH=/root/.nix-profile/bin:/usr/bin:/bin
 
 RUN <<EOF
@@ -9,7 +11,7 @@ RUN <<EOF
     mkdir /config
     # Mirror ZMK repository to make it easier to reference both branches and
     # tags without remote namespacing
-    git clone --mirror https://github.com/moergo-sc/zmk /zmk
+    git clone --mirror "https://github.com/${ZMK_REPO}" /zmk
     GIT_DIR=/zmk git worktree add --detach /src
 EOF
 
@@ -28,7 +30,7 @@ COPY --chmod=755 <<EOF /bin/entrypoint.sh
     set -euo pipefail
     : "\${BRANCH:=main}"
 
-    echo "Checking out \$BRANCH from moergo-sc/zmk" >&2
+    echo "Checking out \$BRANCH" >&2
     cd /src
     git fetch origin
     git checkout -q --detach "\$BRANCH"

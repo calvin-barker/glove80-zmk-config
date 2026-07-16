@@ -19,6 +19,7 @@ The build compiles the left and right halves separately, then merges them into o
   ```
   This requires the firmware source already checked out at `src/` (CI checks out `moergo-sc/zmk@main` into `src/` first).
 
+- **This repo builds against the `calvin-barker/zmk` fork, branch `agent-status`** (agent status keys feature). CI is pinned to it. For local Docker builds pass the repo explicitly: `ZMK_REPO=calvin-barker/zmk ./build.sh agent-status`. A stock `./build.sh` against moergo-sc/zmk main no longer builds this keymap because it references `&agent_jump`.
 - **Local Docker build** (self-contained, clones the firmware source for you):
   ```
   ./build.sh [branch]      # macOS/Linux, defaults to moergo-sc/zmk main
