@@ -89,6 +89,18 @@ anything is built on top of it.**
 
 ## Backlog (not phase-2 blocking)
 
+- **Jumps freeze after jumping to a detached session (HIGH).** Repro: detach the
+  keyboard tmux session, hold H + F1 (opens a new window via `tmux attach`), then
+  H + F-keys to other sessions no longer navigate; detaching the session again
+  restores it. Hypothesis: the inbound JUMP consumer in cmd/glove-agentd/main.go
+  runs `exec.Jump()` synchronously, and focusByTTY's stability loop retries up to
+  ~2.5s. The new `tmux attach` window keeps focus from settling, so every jump
+  burns the full loop; once the inbound buffer (8) fills, the HID readLoop blocks
+  on send and stops reading, freezing all jumps. Detaching closes the window and
+  the pipeline drains. Fixes: (a) dispatch jumps to a worker goroutine so a slow
+  jump never blocks the reader; (b) cap osascript with a timeout / shorten the
+  stability loop; (c) reconsider openTabAndAttach leaving an interfering window.
+  Confirm with the daemon log during a live repro before fixing.
 - **Idle sessions drift to amber (HIGH: undercuts the core signal).** Claude
   Code's `Notification` hook fires both on permission prompts AND after ~60s of
   idle-waiting, and the daemon maps every `Notification` to needs-input (amber).
