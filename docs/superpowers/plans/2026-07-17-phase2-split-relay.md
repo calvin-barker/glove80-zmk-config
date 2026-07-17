@@ -89,6 +89,17 @@ anything is built on top of it.**
 
 ## Backlog (not phase-2 blocking)
 
+- **Idle sessions drift to amber (HIGH: undercuts the core signal).** Claude
+  Code's `Notification` hook fires both on permission prompts AND after ~60s of
+  idle-waiting, and the daemon maps every `Notification` to needs-input (amber).
+  So a session left idle goes green, then amber after a minute, making amber cry
+  wolf. Fix options: (a) inspect the `Notification` payload's `message` and only
+  set amber for permission/action notifications, treating the idle-waiting
+  message as idle/green (fragile string match, version-dependent); (b) use a
+  dedicated `PermissionRequest` hook for amber if it fires reliably as a user
+  hook, and stop mapping `Notification` to amber. Verify the payload/hook
+  availability first. Needs a state.go + hook change, rebuild, reinstall.
+
 - **Green while a backgrounded command runs.** The daemon maps `Stop` (turn
   ended) to idle/green. When Claude backgrounds a long command and ends its turn
   to await it, the session reads green even though it will self-resume, which can
