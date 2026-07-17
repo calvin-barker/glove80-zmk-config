@@ -4,6 +4,16 @@
 
 This repo is the official ZMK configuration of the MoErgo Glove80 wireless split contoured keyboard. Use it to develop your own keymap and easily build your own ZMK firmware to run on your Glove80.
 
+## Agent status keys
+
+This fork adds a live status board for Claude Code agents on the function row: each F-key shows a session's state (soft white working, amber needs-input, green idle, red dead), and holding `H` + tapping a lit key jumps to that session. It has three parts:
+
+- **This repo** carries the keymap side: the `LAYER_Agents` layer, the hold-`H` behavior, and the `&agent_jump` bindings in `config/glove80.keymap`.
+- **Firmware:** [`calvin-barker/zmk`](https://github.com/calvin-barker/zmk) branch `agent-status` adds the raw HID endpoint, the F-row LED overlay, and the `&agent_jump` behavior. CI here builds against it (see CLAUDE.md).
+- **Host daemon:** [`calvin-barker/glove-agentd`](https://github.com/calvin-barker/glove-agentd) reads Claude Code session state from hooks, paints the LEDs, and performs the jumps. Start there to run the feature.
+
+Design and implementation notes live under `docs/superpowers/`. The rest of this README is the stock Glove80 template.
+
 **NOTE: You can also customize the layout of your Glove80 keyboard with the Glove80 Layout Editor webapp. For most users Glove80 Layout Editor is the recommended and simpler option. More information is available at the official MoErgo Glove80 Support site (see resources below).**
 
 These steps will get you using your keymap on your keyboard in the fastest time possible. It uses the GitHub Actions feature to build your firmware online.
