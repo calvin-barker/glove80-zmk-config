@@ -4,6 +4,9 @@
 
 ZMK_DIR ?= $(HOME)/development/zmk
 CONTAINER := zmk-nix
+# Pinned to the digest of the known-good build container (nix 2.18.4);
+# the floating nixos-23.11 tag can resolve to different images over time.
+IMAGE := nixpkgs/nix:nixos-23.11@sha256:11c1c37da85b27f1b47a7c0fdff8e3cf970cafaac623312dbcf243c84b8756dd
 # Cap compile parallelism inside the container. Nix defaults to all cores,
 # and 18 emulated compilers outrun Docker Desktop's default memory allowance
 # (the kernel OOM-kills the build: exit 137). Raise if your VM has 12GB+.
@@ -16,7 +19,7 @@ help: ## show available targets
 
 container: ## create or start the persistent zmk-nix build container
 	@docker start $(CONTAINER) 2>/dev/null || \
-	  docker run -d --name $(CONTAINER) --platform linux/amd64 -v "$(ZMK_DIR):/src" -w /src nixpkgs/nix:nixos-23.11 sleep infinity
+	  docker run -d --name $(CONTAINER) --platform linux/amd64 -v "$(ZMK_DIR):/src" -w /src $(IMAGE) sleep infinity
 	@# Repair configuration in place every run: a container created any other
 	@# way (or an interrupted setup) would otherwise fail with
 	@# "unable to load seccomp BPF program" under Docker emulation.
