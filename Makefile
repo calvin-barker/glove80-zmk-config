@@ -21,7 +21,7 @@ container: ## create or start the persistent zmk-nix build container
 	@# way (or an interrupted setup) would otherwise fail with
 	@# "unable to load seccomp BPF program" under Docker emulation.
 	@# Pure-sh checks: the container's exec shell has no grep on PATH.
-	@docker exec $(CONTAINER) sh -c 'case "$$(cat /etc/nix/nix.conf 2>/dev/null)" in *"filter-syscalls = false"*) : ;; *) printf "sandbox = false\nfilter-syscalls = false\n" >> /etc/nix/nix.conf ;; esac'
+	@docker exec $(CONTAINER) sh -c 'case "$$(cat /etc/nix/nix.conf 2>/dev/null)" in *"filter-syscalls = false"*) : ;; *) mkdir -p /etc/nix && printf "sandbox = false\nfilter-syscalls = false\n" >> /etc/nix/nix.conf ;; esac'
 	@docker exec $(CONTAINER) sh -c 'export PATH=/root/.nix-profile/bin:$$PATH; case "$$(cat /root/.config/nix/nix.conf /etc/nix/nix.conf 2>/dev/null)" in *moergo-glove80-zmk-dev*) : ;; *) command -v cachix >/dev/null || nix-env -iA cachix -f https://cachix.org/api/v1/install; cachix use moergo-glove80-zmk-dev ;; esac'
 
 firmware: container ## build combined glove80.uf2 against the fork, copy to repo root
