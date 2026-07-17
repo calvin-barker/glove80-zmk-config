@@ -4,6 +4,10 @@
 
 ZMK_DIR ?= $(HOME)/development/zmk
 CONTAINER := zmk-nix
+# Cap compile parallelism inside the container. Nix defaults to all cores,
+# and 18 emulated compilers outrun Docker Desktop's default memory allowance
+# (the kernel OOM-kills the build: exit 137). Raise if your VM has 12GB+.
+NIX_CORES ?= 2
 
 .PHONY: help container firmware flash test-leds listen bench
 
@@ -18,7 +22,7 @@ container: ## create or start the persistent zmk-nix build container
 firmware: container ## build combined glove80.uf2 against the fork, copy to repo root
 	docker exec $(CONTAINER) sh -c 'rm -rf /cfg && mkdir -p /cfg'
 	docker cp config $(CONTAINER):/cfg/config
-	docker exec $(CONTAINER) sh -c 'nix-build /cfg/config --arg firmware "import /src/default.nix {}" -o /tmp/combined'
+	docker exec $(CONTAINER) sh -c 'nix-build /cfg/config --arg firmware "import /src/default.nix {}" -j1 --cores $(NIX_CORES) -o /tmp/combined'
 	docker cp $(CONTAINER):/tmp/combined/glove80.uf2 ./glove80.uf2
 	@ls -la glove80.uf2
 
