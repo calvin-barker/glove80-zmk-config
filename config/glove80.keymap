@@ -83,6 +83,7 @@
 #define LAYER_MouseWarp 17
 #define LAYER_Lower 18
 #define LAYER_Magic 19
+#define LAYER_Agents 20
 
 /* To deal with the situation where there is no Lower layer, to keep &lower happy */
 #ifndef LAYER_Lower
@@ -1288,6 +1289,21 @@
             quick-tap-ms = <300>;
             require-prior-idle-ms = <0>;
         };
+
+        // agents_layer_access: hold H to arm the Agents layer.
+        // Hold only triggers when the other key pressed is an F-row key,
+        // so fast letter sequences can never misfire.
+        agents_H: agents_H {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+            bindings = <&mo>, <&kp>;
+            flavor = "balanced";
+            quick-tap-ms = <300>;
+            require-prior-idle-ms = <100>;
+            hold-trigger-key-positions = <POS_LH_C6R1 POS_LH_C5R1 POS_LH_C4R1 POS_LH_C3R1 POS_LH_C2R1 POS_RH_C2R1 POS_RH_C3R1 POS_RH_C4R1 POS_RH_C5R1 POS_RH_C6R1>;
+            hold-trigger-on-release;
+        };
     };
 };
 
@@ -1393,7 +1409,7 @@
             &kp EQUAL                           &kp N1                         &kp N2                          &kp N3                           &kp N4  &kp N5                                                                                                                                   &kp N6                            &kp N7                           &kp N8                          &kp N9                            &kp N0   &kp BSLH
               &kp TAB                            &kp Q                          &kp W                           &kp F                            &kp P   &kp B                                                                                                                                    &kp J                             &kp L                            &kp U                           &kp Y                          &kp SEMI  &kp MINUS
               &kp ESC  &HRM_left_pinky_v1B_TKZ LCTRL A  &HRM_left_ring_v1B_TKZ LALT R  &HRM_left_middy_v1B_TKZ LGUI S  &HRM_left_index_v1B_TKZ LSHFT T   &kp G                                                                                                                                    &kp M  &HRM_right_index_v1B_TKZ RSHFT N  &HRM_right_middy_v1B_TKZ RGUI E  &HRM_right_ring_v1B_TKZ LALT I  &HRM_right_pinky_v1B_TKZ RCTRL O    &kp SQT
-            &kp GRAVE                            &kp Z                          &kp X                           &kp C                            &kp D   &kp V                        &kp LSHFT  &kp LGUI    &lower  &kp LCTRL                       &kp RGUI                         &kp RSHFT   &kp K                             &kp H                        &kp COMMA                         &kp DOT                          &kp FSLH  &kp PG_UP
+            &kp GRAVE                            &kp Z                          &kp X                           &kp C                            &kp D   &kp V                        &kp LSHFT  &kp LGUI    &lower  &kp LCTRL                       &kp RGUI                         &kp RSHFT   &kp K       &agents_H LAYER_Agents H                        &kp COMMA                         &kp DOT                          &kp FSLH  &kp PG_UP
  &magic LAYER_Magic 0                         &kp HOME                        &kp END                        &kp LEFT                        &kp RIGHT          &thumb_v2_TKZ LAYER_Cursor BSPC   &kp DEL  &kp LALT   &kp RALT  &thumb_v2_TKZ LAYER_Mouse RET  &space_v3_TKZ LAYER_Symbol SPACE                                    &kp UP                         &kp DOWN                        &kp LBKT                          &kp RBKT  &kp PG_DN
             >;
         };
@@ -1604,6 +1620,17 @@
          &bootloader  &rgb_ug RGB_SPD   &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD      &rgb_ug RGB_EFF                                                         &none   &none   &none   &none       &none     &bootloader
           &sys_reset            &none             &none            &none            &none                &none   &bt_2   &bt_3         &none   &none   &none   &none   &none   &none   &none   &none       &none      &sys_reset
                &none            &none             &none            &none            &none                        &bt_0   &bt_1  &out OUT_USB   &none   &none   &none           &none   &none   &none       &none           &none
+            >;
+        };
+
+        layer_Agents {
+            bindings = <
+ &agent_jump 1  &agent_jump 2  &agent_jump 3  &agent_jump 4  &agent_jump 5                                                          &agent_jump 6  &agent_jump 7  &agent_jump 8  &agent_jump 9  &agent_jump 10
+         &none          &none          &none          &none          &none  &none                                          &none          &none          &none          &none          &none           &none
+         &none          &none          &none          &none          &none  &none                                          &none          &none          &none          &none          &none           &none
+         &none          &none          &none          &none          &none  &none                                          &none          &none          &none          &none          &none           &none
+         &none          &none          &none          &none          &none  &none  &none  &none  &none  &none  &none  &none  &none        &none          &none          &none          &none           &none
+         &none          &none          &none          &none          &none         &none  &none  &none  &none  &none  &none               &none          &none          &none          &none           &none
             >;
         };
 

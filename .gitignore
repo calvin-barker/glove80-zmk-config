@@ -1,2 +1,4 @@
 *~
 *.uf2
+.superpowers/
+__pycache__/
