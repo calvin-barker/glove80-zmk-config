@@ -9,7 +9,7 @@ This repo is the official ZMK configuration of the MoErgo Glove80 wireless split
 This fork adds a live status board for Claude Code agents on the function row: each F-key shows a session's state (soft white working, amber needs-input, green idle, red dead), and holding `H` + tapping a lit key jumps to that session. It has three parts:
 
 - **This repo** carries the keymap side: the `LAYER_Agents` layer, the hold-`H` behavior, and the `&agent_jump` bindings in `config/glove80.keymap`.
-- **Firmware:** [`calvin-barker/zmk`](https://github.com/calvin-barker/zmk) branch `agent-status` adds the raw HID endpoint, the F-row LED overlay, and the `&agent_jump` behavior. CI here builds against it (see CLAUDE.md).
+- **Firmware:** the [`calvin-barker/zmk`](https://github.com/calvin-barker/zmk) fork adds the raw HID endpoint, the F-row LED overlay, and the `&agent_jump` behavior on its `main` branch. CI here builds against it (see CLAUDE.md).
 - **Host daemon:** [`calvin-barker/glove-agentd`](https://github.com/calvin-barker/glove-agentd) reads Claude Code session state from hooks, paints the LEDs, and performs the jumps. Start there to run the feature.
 
 Design and implementation notes live under `docs/superpowers/`. The rest of this README is the stock Glove80 template.

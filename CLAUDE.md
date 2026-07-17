@@ -17,9 +17,9 @@ The build compiles the left and right halves separately, then merges them into o
   nix-build config -o combined
   cp combined/glove80.uf2 glove80.uf2
   ```
-  This requires the firmware source already checked out at `src/` (CI checks out `calvin-barker/zmk@agent-status` into `src/` first).
+  This requires the firmware source already checked out at `src/` (CI checks out `calvin-barker/zmk` default branch into `src/` first).
 
-- **This repo builds against the `calvin-barker/zmk` fork, branch `agent-status`** (agent status keys feature). CI is pinned to it. For local Docker builds pass the repo explicitly: `ZMK_REPO=calvin-barker/zmk ./build.sh agent-status`. A stock `./build.sh` against moergo-sc/zmk main no longer builds this keymap because it references `&agent_jump`.
+- **This repo builds against the `calvin-barker/zmk` fork** (agent status keys feature lives on the fork's `main`). CI uses the fork's default branch. For local Docker builds pass the repo explicitly: `ZMK_REPO=calvin-barker/zmk ./build.sh`. A stock `./build.sh` against moergo-sc/zmk main no longer builds this keymap because it references `&agent_jump`.
 - **Local Docker build** (self-contained, clones the firmware source for you):
   ```
   ./build.sh [branch]      # macOS/Linux, defaults to moergo-sc/zmk main

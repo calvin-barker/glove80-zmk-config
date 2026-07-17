@@ -12,7 +12,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: calvin-barker/zmk
-          ref: agent-status
+          # No ref: builds against the fork's default branch (main), which
+          # carries the agent status firmware. Nothing to keep in sync here.
           path: src
       - uses: cachix/install-nix-action@v25
         with:
