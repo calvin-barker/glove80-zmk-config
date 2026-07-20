@@ -89,6 +89,23 @@ anything is built on top of it.**
 
 ## Backlog (not phase-2 blocking)
 
+### Fixed 2026-07-18 (glove-agentd main, daemon-only, no flash)
+
+- **Jump freeze fixed.** Jumps now run on a worker goroutine off the HID reader,
+  each tmux/osascript call has a 5s timeout, so a slow jump can't freeze the
+  pipeline. (commit "Fix jump freeze and idle-drifts-to-amber")
+- **Idle-drifts-to-amber fixed.** Notifications are classified by message; the
+  idle-waiting message stays green. Tunable via `idle_notification_substrings`.
+  (Depends on Claude Code including the idle wording in the Notification payload;
+  if idle still drifts to amber on some version, tune the config string.)
+- **Cross-window jump focus fixed.** Raising the target window now also claims
+  the key window (AXMain) so keyboard focus follows, and the target pane is
+  selected before raising plus corrected in a non-early-exit loop, beating
+  iTerm's deferred pane-restore. (commits "Claim the key window on jump...",
+  "Beat the deferred pane-restore race on jump")
+
+### Still open
+
 - **Jumps freeze after jumping to a detached session (HIGH).** Repro: detach the
   keyboard tmux session, hold H + F1 (opens a new window via `tmux attach`), then
   H + F-keys to other sessions no longer navigate; detaching the session again
